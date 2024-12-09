@@ -23,6 +23,10 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>aws-sdk-java</artifactId>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
