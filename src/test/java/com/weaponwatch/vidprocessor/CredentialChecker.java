@@ -10,7 +10,7 @@ public class CredentialChecker {
     public static void main(String[] args) {
         try {
             StsClient stsClient = StsClient.builder()
-                    .region(Region.US_EAST_1) // Use your preferred region
+                    .region(Region.US_EAST_1)
                     .credentialsProvider(DefaultCredentialsProvider.create())
                     .build();
 
