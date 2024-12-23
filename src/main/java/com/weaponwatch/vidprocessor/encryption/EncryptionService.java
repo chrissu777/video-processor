@@ -1,2 +1,5 @@
-package com.weaponwatch.vidprocessor.encryption;public class EncryptionService {
+package com.weaponwatch.vidprocessor.encryption;
+
+
+public class EncryptionService {
 }
