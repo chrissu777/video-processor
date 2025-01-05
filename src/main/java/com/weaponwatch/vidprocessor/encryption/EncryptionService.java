@@ -3,6 +3,7 @@ package com.weaponwatch.vidprocessor.encryption;
 /*
     TODO: Excpetion Handling
  */
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -19,7 +20,7 @@ public class EncryptionService {
     private static final int GCM_TAG_LENGTH = 128;
     private static final int IV_SIZE = 12;
 
-    public void encryptFile(byte[] key, String fileInPath, String fileOutPath) throws Exception{
+    public void encryptFile(byte[] key, String fileInPath, String fileOutPath) throws Exception {
         Path inAsPath = Paths.get(fileInPath);
         byte[] fileData = Files.readAllBytes(inAsPath);
 
@@ -33,6 +34,12 @@ public class EncryptionService {
         Cipher cipher = Cipher.getInstance(AES_TRANSFORMATION);
         SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
         cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, gcmParameterSpec);
+
+        byte[] encryptedData = cipher.doFinal(fileData);
+        try (FileOutputStream fos = new FileOutputStream(fileOutPath)) {
+            fos.write(iv);
+            fos.write(encryptedData);
+        }
 
     }
 }
