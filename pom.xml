@@ -27,12 +27,27 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-encryption-sdk-java</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.cryptography</groupId>
+            <artifactId>aws-cryptographic-material-providers</artifactId>
+            <version>1.8.0</version>
+        </dependency>
+        <dependency>
             <groupId>software.amazon.awssdk</groupId>
-            <artifactId>s3</artifactId>
+            <artifactId>dynamodb</artifactId>
+            <version>2.30.5</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>kms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
