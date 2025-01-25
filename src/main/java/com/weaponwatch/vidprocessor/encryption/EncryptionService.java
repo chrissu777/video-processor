@@ -3,40 +3,35 @@ package com.weaponwatch.vidprocessor.encryption;
 /*
     TODO: Excpetion Handling
  */
-import javax.crypto.Cipher;
-import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import java.io.FileOutputStream;
+
+import com.amazonaws.encryptionsdk.AwsCrypto;
+import com.amazonaws.encryptionsdk.CryptoResult;
+import com.amazonaws.encryptionsdk.MasterKeyProvider;
+import com.amazonaws.encryptionsdk.kms.KmsMasterKeyProvider;
+
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.SecureRandom;
+import java.util.Collections;
+
 
 public class EncryptionService {
-    private static final String AES_TRANSFORMATION = "AES/GCM/NoPadding";
-    private static final int GCM_TAG_LENGTH = 128;
-    private static final int IV_SIZE = 12;
+    private final AwsCrypto crypto;
+    private final MasterKeyProvider<?> masterKeyProvider;
 
-    public void encryptFile(byte[] key, Path inputPath, Path outputPath) throws Exception{
-        byte[] fileData = Files.readAllBytes(inputPath);
+    public EncryptionService(String kmsKeyArn) {
+        // Instantiate SDK
+        this.crypto = AwsCrypto.builder().build();
+        // Instantiate AWS KMS master key provider in strict mode using buildStrict().
+        this.masterKeyProvider = KmsMasterKeyProvider.builder().buildStrict(kmsKeyArn);
+    }
 
-        Cipher cipher = Cipher.getInstance(AES_TRANSFORMATION); // AES GCM instance
-        byte[] iv = new byte[IV_SIZE]; // random IV generation
+    public void encryptFile(Path inputPath, Path outputPath) throws IOException {
+        byte[] plaintext = Files.readAllBytes(inputPath);
+        /*TODO encryption context*/
 
-        SecureRandom random = new SecureRandom(); // for RNG
-        random.nextBytes(iv);
-
-        // cipher initialization
-        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
-        SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, gcmParameterSpec);
-
-        byte[] cipherText = cipher.doFinal(fileData);
-        byte[] outputBytes = new byte[iv.length + cipherText.length];
-
-        System.arraycopy(iv, 0, outputBytes, 0, iv.length);
-        System.arraycopy(cipherText, 0, outputBytes, iv.length, cipherText.length);
-
-        Files.write(outputPath, outputBytes);
+        CryptoResult<byte[], ?> result = crypto.encryptData(masterKeyProvider, plaintext);
+        final byte[] ciphertext = result.getResult();
+        Files.write(outputPath, ciphertext);
     }
 }
